@@ -5,6 +5,8 @@
 ## 技术栈
 Tauri v2 · Vanilla JS + Vite (dev server) · Rust (tiny_http) · Windows + macOS
 
+> **国内网络用户**:首次跑 dev 必看 [`docs/cn-network-setup.md`](docs/cn-network-setup.md) 或直接执行 `bash scripts/setup-cn-network.sh [--proxy http://host:port]` 配镜像源 + 调 timeout。
+
 ## 项目结构
 ```
 ccpet/
