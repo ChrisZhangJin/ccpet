@@ -22,3 +22,7 @@ src-tauri/gen/schemas/
 .env
 .env.local
 dog.png.sample
+
+# Secrets / private keys
+*.key
+*.pem
