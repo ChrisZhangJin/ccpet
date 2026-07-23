@@ -27,6 +27,7 @@
         "y": 100
       }
     ],
+    "macOSPrivateApi": true,
     "security": {
       "csp": null
     }
