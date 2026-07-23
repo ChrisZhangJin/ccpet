@@ -3,7 +3,7 @@
 一个常驻桌角、透明置顶、点击穿透的桌面宠物。收到本地 HTTP 请求时播放"狗叫 + 摇尾"反应，由 Claude Code `Stop` hook 在编码任务结束时触发。
 
 ## 技术栈
-Tauri v2 · Vanilla JS + Vite (dev server) · Rust (tiny_http) · Windows only
+Tauri v2 · Vanilla JS + Vite (dev server) · Rust (tiny_http) · Windows + macOS
 
 ## 项目结构
 ```
@@ -27,10 +27,16 @@ ccpet/
     └── icons/
 ```
 
-## Prerequisites (Windows)
+## Prerequisites
+### Windows
 1. **Rust** (stable) — https://rustup.rs
 2. **Node.js** 18+ — https://nodejs.org
 3. **VS Build Tools with C++** — 安装 "Desktop development with C++" 工作负载（WebView2 运行时随 Tauri 自动拉取）
+
+### macOS
+1. **Rust** (stable) — https://rustup.rs
+2. **Node.js** 18+ — https://nodejs.org
+3. **Xcode Command Line Tools** — `xcode-select --install`
 
 > 若 `cargo` 拉取依赖极慢/限流，配置国内镜像 `~/.cargo/config.toml`：
 > ```toml
@@ -41,10 +47,19 @@ ccpet/
 > ```
 
 ## 运行命令
-```powershell
+```bash
 cd ccpet
 npm install
-npm run tauri:dev        # 等价于 npx tauri dev
+npm run tauri:dev        # 当前平台开发
+npm run tauri:dev:mac    # macOS Apple Silicon
+```
+
+按平台构建：
+```bash
+npm run tauri:build:mac          # macOS Apple Silicon
+npm run tauri:build:mac:intel   # macOS Intel
+npm run tauri:build:mac:universal
+npm run tauri:build:windows      # Windows x64（需在 Windows 主机或 CI 构建）
 ```
 首次编译需数分钟（下载 + 编译 Tauri 依赖）。窗口应出现在主显示器右下角。
 
@@ -70,7 +85,7 @@ npm run tauri:dev        # 等价于 npx tauri dev
   }
 }
 ```
-> Stop 事件无 matcher 支持，每次会话结束都触发。`curl` 随 Windows 10/11 自带。
+> Stop 事件无 matcher 支持，每次会话结束都触发。Windows 自带 `curl`；macOS 需先 `xcode-select --install` 或单独安装。
 
 ## 手动测试触发（最可靠的验证方式）
 应用运行后，另开终端：
@@ -93,4 +108,4 @@ curl -X POST http://127.0.0.1:4242/bark
 - 真实 Windows 机器上无此限制，`npm run tauri:dev` 可正常编译运行。
 
 ## 明确不在范围内
-屏幕漫游/鼠标跟随、精灵图/AI 帧、agent 状态感知、多显示器、跨平台、代码签名、自动更新。
+屏幕漫游/鼠标跟随、精灵图/AI 帧、agent 状态感知、多显示器、代码签名、自动更新。

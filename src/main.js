@@ -19,6 +19,24 @@ dbg('main.js loaded');
 const dog = document.getElementById('dog');
 const bubble = document.getElementById('speech-bubble');
 const audio = new Audio('/bark.mp3');
+audio.autoplay = true;
+audio.playsInline = true;
+audio.preload = 'auto';
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || '') || /Mac OS X/.test(navigator.userAgent || '');
+const DRAG_MODIFIER = IS_MAC ? 'Meta' : 'Control';
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(() => {});
+}
+
+window.addEventListener('pointerdown', unlockAudio, { once: true });
+window.addEventListener('keydown', unlockAudio, { once: true });
 const container = document.getElementById('pet-container');
 
 let reacting = false;
@@ -27,12 +45,7 @@ let reacting = false;
 // The window is normally click-through (clicks pass to the apps behind it),
 // so the OS never sees the mouse on the pet.
 //
-// While Ctrl is held we flip click-through OFF: the cursor now lands on the
-// pet. As soon as the cursor enters the pet, we switch the CSS cursor to
-// "move" so the user knows it is grabbable. A mousedown starts a drag —
-// every mousemove updates the window position by invoking a Rust command.
-// Releasing Ctrl restores click-through (the cursor immediately leaves the
-// pet because the next mousemove will be captured by the app underneath).
+// While the platform modifier is held we flip click-through OFF: the cursor now lands on the pet.
 let ctrlHeld = false;
 let pointerInside = false;
 let dragging = false;
@@ -58,22 +71,22 @@ function applyCursor() {
 }
 
 window.addEventListener('keydown', (e) => {
-  if (e.key === 'Control' && !ctrlHeld) {
+  if (e.key === DRAG_MODIFIER && !ctrlHeld) {
     ctrlHeld = true;
-    dbg('Ctrl down -> disable click-through');
+    dbg(DRAG_MODIFIER + ' down -> disable click-through');
     setClickThrough(false);
     applyCursor();
   }
-  if (e.code === 'KeyB' && !e.ctrlKey) {
+  if (e.code === 'KeyB' && !e.ctrlKey && !e.metaKey) {
     playReaction('manual-key');
   }
 });
 
 window.addEventListener('keyup', (e) => {
-  if (e.key === 'Control' && ctrlHeld) {
+  if (e.key === DRAG_MODIFIER && ctrlHeld) {
     ctrlHeld = false;
     dragging = false;
-    dbg('Ctrl up -> re-enable click-through');
+    dbg(DRAG_MODIFIER + ' up -> re-enable click-through');
     setClickThrough(true);
     container.style.cursor = '';
   }

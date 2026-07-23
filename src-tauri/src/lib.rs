@@ -9,16 +9,18 @@ pub fn run() {
             // Get the main window and set click-through
             let window = app.get_webview_window("main").expect("failed to get main window");
             window.set_ignore_cursor_events(true).expect("failed to set ignore cursor events");
-            eprintln!("[ccpet] main window ready, click-through ON (hold Ctrl to drag)");
+            eprintln!("[ccpet] main window ready, click-through ON (hold platform drag key to drag)");
 
-            // Position window at bottom-right corner of primary monitor
+            // Position window at bottom-right corner of the primary monitor.
+            // macOS reserves additional space for the menu bar and Dock.
             if let Some(monitor) = window.current_monitor().ok().flatten() {
                 let monitor_size = monitor.size();
                 let scale = monitor.scale_factor();
                 let win_w = 300.0;
                 let win_h = 300.0;
+                let bottom_inset = if cfg!(target_os = "macos") { 90.0 } else { 60.0 };
                 let x = (monitor_size.width as f64 / scale) - win_w - 20.0;
-                let y = (monitor_size.height as f64 / scale) - win_h - 60.0;
+                let y = (monitor_size.height as f64 / scale) - win_h - bottom_inset;
                 let _ = window.set_position(tauri::Position::Logical(tauri::LogicalPosition::new(x, y)));
             }
 
@@ -34,9 +36,8 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-/// Frontend invokes this to move the pet window during a Ctrl+drag.
-/// Coordinates are in physical pixels (Logical) and are absolute screen
-/// positions, matching what `mousemove` reports on Windows.
+/// Frontend invokes this to move the pet window during a platform-modifier drag.
+/// Coordinates are logical screen positions.
 #[tauri::command]
 fn set_window_position(window: WebviewWindow, x: f64, y: f64) -> Result<(), String> {
     window

@@ -8,7 +8,13 @@
     "build": "vite build",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:dev:mac": "tauri dev --target aarch64-apple-darwin",
+    "tauri:dev:mac:intel": "tauri dev --target x86_64-apple-darwin",
+    "tauri:build": "tauri build",
+    "tauri:build:mac": "tauri build --target aarch64-apple-darwin",
+    "tauri:build:mac:intel": "tauri build --target x86_64-apple-darwin",
+    "tauri:build:mac:universal": "tauri build --target universal-apple-darwin",
+    "tauri:build:windows": "tauri build --target x86_64-pc-windows-msvc"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",

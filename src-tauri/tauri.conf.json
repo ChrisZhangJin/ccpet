@@ -23,7 +23,6 @@
         "shadow": false,
         "skipTaskbar": true,
         "center": false,
-        "additionalBrowserArgs": "--autoplay-policy=no-user-gesture-required",
         "x": 100,
         "y": 100
       }
