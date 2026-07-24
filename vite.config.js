@@ -6,8 +6,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   root: 'src',
   base: './',
-  // Treat src/assets as Vite's public dir so dog.png / bark.mp3 are served
-  // at the site root (/dog.png, /bark.mp3) and copied into dist on build.
+  // Treat src/assets as Vite's public dir so pet.png / bark.mp3 are served
+  // at the site root (/pet.png, /bark.mp3) and copied into dist on build.
   publicDir: 'assets',
   build: {
     outDir: '../dist',

@@ -17,7 +17,7 @@ ccpet/
 │   ├── main.js             # listen('action') → playReaction()
 │   ├── styles.css          # idle-bob + reaction(bark+wag) 动画
 │   └── assets/
-│       ├── dog.png         # ← 换成你的狗（去背 PNG）
+│       ├── pet.png         # ← 换成你的宠物（去背 PNG）
 │       └── bark.mp3        # ← 换成你的狗叫（mp3）
 └── src-tauri/
     ├── tauri.conf.json     # 透明/置顶/穿透/点击穿透/csp:null
@@ -66,7 +66,7 @@ npm run tauri:build:windows      # Windows x64（需在 Windows 主机或 CI 构
 首次编译需数分钟（下载 + 编译 Tauri 依赖）。窗口应出现在主显示器右下角。
 
 ## 放置你的素材
-- 狗图片 → 覆盖 `src/assets/dog.png`（保留透明背景，建议 ~200×200 居中）
+- 宠物图片 → 覆盖 `src/assets/pet.png`（保留透明背景，建议 ~200×200 居中）
 - 狗叫音频 → 覆盖 `src/assets/bark.mp3`（代码引用 `/bark.mp3`）
 
 ## Claude Code Stop hook
@@ -98,7 +98,7 @@ curl -X POST http://127.0.0.1:4242/bark
 
 ## 分步验证清单（建议按此顺序在真机确认）
 1. **透明窗口**：背景透出桌面，窗口无边框，始终在最上层，鼠标点击穿透窗口落到下方应用。
-2. **闲置**：狗 PNG 持续轻微上下浮动（idle-bob）。
+2. **闲置**：宠物 PNG 持续轻微上下浮动（idle-bob）。
 3. **反应动画**：用 `curl -X POST http://127.0.0.1:4242/bark` 触发 → 摇尾 + 吠叫 + 气泡 + 音频，2s 后回 idle。
 4. **HTTP 监听**：`:4242` 可被 curl 访问，`POST /bark` 返回 200 并发 `action` 事件。
 5. **Claude Code hook**：编码任务结束（Stop）时自动 curl，宠物自动反应。

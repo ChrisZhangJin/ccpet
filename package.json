@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "gen-icons": "python scripts/make-icons.py",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:dev:mac": "tauri dev --target aarch64-apple-darwin",

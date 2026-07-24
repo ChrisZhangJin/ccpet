@@ -199,4 +199,30 @@ async function setupListener() {
   }
 }
 
+// === Global modifier events (Windows) ===
+// On Windows, click-through windows can't receive keyboard focus,
+// so the Rust backend polls Ctrl key state globally and emits these events.
+// On macOS, the existing keydown/keyup handlers above work fine (app-level
+// keyboard dispatch), so these listeners are a harmless no-op there.
+listen('drag-modifier-down', () => {
+  if (!ctrlHeld) {
+    ctrlHeld = true;
+    dbg('global Ctrl down -> disable click-through');
+    setClickThrough(false);
+    // Focus window so mouse events (mousedown/mousemove) land on the webview
+    appWindow.setFocus().catch(() => {});
+    applyCursor();
+  }
+});
+
+listen('drag-modifier-up', () => {
+  if (ctrlHeld) {
+    ctrlHeld = false;
+    dragging = false;
+    dbg('global Ctrl up -> re-enable click-through');
+    setClickThrough(true);
+    container.style.cursor = '';
+  }
+});
+
 setupListener();

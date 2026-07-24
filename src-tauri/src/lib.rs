@@ -30,6 +30,11 @@ pub fn run() {
                 start_http_server(app_handle);
             });
 
+            // On Windows, start a global Ctrl key watcher. Click-through windows
+            // never get keyboard focus, so we poll the key state via Win32 API.
+            #[cfg(target_os = "windows")]
+            start_ctrl_watcher(app.handle().clone());
+
             Ok(())
         })
         .run(tauri::generate_context!())
@@ -43,6 +48,33 @@ fn set_window_position(window: WebviewWindow, x: f64, y: f64) -> Result<(), Stri
     window
         .set_position(tauri::Position::Logical(tauri::LogicalPosition::new(x, y)))
         .map_err(|e| e.to_string())
+}
+
+/// Windows-only: poll the global Ctrl key state via GetAsyncKeyState.
+/// Click-through windows can't receive keyboard events because they never
+/// get focus on Windows (unlike macOS where app-level keyboard dispatch works).
+#[cfg(target_os = "windows")]
+fn start_ctrl_watcher(app: AppHandle) {
+    use windows::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
+    const VK_CONTROL: i32 = 0x11;
+
+    thread::spawn(move || {
+        let mut was_pressed = false;
+        loop {
+            let state = unsafe { GetAsyncKeyState(VK_CONTROL) };
+            let is_pressed = (state & 0x8000) != 0;
+
+            if is_pressed && !was_pressed {
+                let _ = app.emit("drag-modifier-down", ());
+            } else if !is_pressed && was_pressed {
+                let _ = app.emit("drag-modifier-up", ());
+            }
+
+            was_pressed = is_pressed;
+            thread::sleep(std::time::Duration::from_millis(16)); // ~60 Hz
+        }
+    });
+    eprintln!("[ccpet] Windows global Ctrl watcher started (~60 Hz polling)");
 }
 
 fn start_http_server(app: AppHandle) {
